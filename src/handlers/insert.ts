@@ -1,4 +1,3 @@
-import { SupabaseRealtimePayload } from '@supabase/supabase-js'
 import cron from 'node-cron'
 import day, { Dayjs } from 'dayjs'
 
@@ -8,12 +7,12 @@ import { Appointment, DateModel, ReminderPeriod } from '../types/types'
 import { convertFromDateModelToJSDate, convertFromDayjsDateToDateModel } from '../utils'
 import { sendSMS } from '../communicationChannels/sms'
 
-export const handleInsertSubscription = (payload: SupabaseRealtimePayload<definitions['appointment']>) => {
+export const handleInsertSubscription = (record: definitions['appointment']) => {
     const appointment: Appointment = {
-        ...payload.new,
-        date: JSON.parse(payload.new.date),
-        requestor: JSON.parse(payload.new.requestor),
-        invitee: JSON.parse(payload.new.invitee)
+        ...record,
+        date: JSON.parse(record.date),
+        requestor: JSON.parse(record.requestor),
+        invitee: JSON.parse(record.invitee)
     }
 
     const getDateModelsFromRemindPeriods = (remindPeriods: ReminderPeriod[]): DateModel[] => remindPeriods.map(getDateModelFromRemindPeriod)
