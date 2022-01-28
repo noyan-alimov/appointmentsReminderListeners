@@ -1,4 +1,4 @@
-import cron from 'node-cron'
+import cron, { ScheduledTask } from 'node-cron'
 import day, { Dayjs } from 'dayjs'
 
 import { cronJobs } from '../timeouts'
@@ -7,7 +7,7 @@ import { Appointment, DateModel, ReminderPeriod } from '../types/types'
 import { convertFromDateModelToJSDate, convertFromDayjsDateToDateModel } from '../utils'
 import { sendSMS } from '../communicationChannels/sms'
 
-export const handleInsertSubscription = (record: definitions['appointment']) => {
+export const handleInsertAppointment = (record: definitions['appointment']) => {
     const appointment: Appointment = {
         ...record,
         date: JSON.parse(record.date),
@@ -84,4 +84,10 @@ export const handleInsertSubscription = (record: definitions['appointment']) => 
     })
 
     cronJobs[appointment.id] = [...inviteeCronJobs, ...requestorCronJobs]
+    cronJobs[appointment.id].forEach((cronJob: ScheduledTask) => {
+        cronJob.on('task-done', async (result: Promise<void>) => {
+            const awaitedResult = await result
+            console.log(`${day().format('DD/MM/YYYY HH:mm')} SMS.to: ${awaitedResult}`)
+        })
+    })
 }
