@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "compile": "./node_modules/.bin/tsc",
-    "prod": "node dist/index.js",
-    "start": "yarn compile && yarn prod"
+    "postinstall": "./node_modules/.bin/tsc",
+    "start": "node dist/index.js",
+    "dev": "yarn compile && yarn prod"
   },
+  "engines": { "node": "16.8.0" },
   "keywords": [],
   "author": "",
   "license": "ISC",
